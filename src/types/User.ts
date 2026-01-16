@@ -26,3 +26,10 @@ export const ReturnUser = {
     role: true
 }
 
+
+export const ReturnSimpleUser = {
+    id: true,
+    avatar: true,
+    name: true,
+    username: true
+}
