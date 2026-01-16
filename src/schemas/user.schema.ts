@@ -19,6 +19,7 @@ export type UpdateUserData = z.infer<typeof updateUserSchema> & {
 
 
 export const updatePasswordSchema = z.object({
+    currentPassword: z.string({ error: "Campo obrigatório" }),
     password: z.string({ error: "Campo obrigatório" })
         .regex(/^(?=.*[A-Z])(?=.*\d).{8,}$/, { error: "A senha deve ter o mínimo de 8 caracteres, e conter ao menos um número e um caractere especial" }),
     confirmPassword: z.string({ error: "Campo obrigatório" })
@@ -27,6 +28,7 @@ export const updatePasswordSchema = z.object({
         { error: "As senha não coincidem" }
 }).transform(({ confirmPassword, ...rest }) => rest);
 
-export type UpdateUserPasswordData = z.infer<typeof updatePasswordSchema> & {
-    passwordUpdatedAt: Date
+export type UpdateUserPasswordData = {
+    password: string;
+    passwordUpdatedAt: Date;
 }

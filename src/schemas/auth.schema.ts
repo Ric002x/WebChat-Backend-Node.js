@@ -19,5 +19,7 @@ export const registerSchema = z.object({
         { error: "As senha não coincidem" }
 }).transform(({ confirmPassword, ...rest }) => rest);
 
-export type RegisterData = z.infer<typeof registerSchema>
+export type RegisterData = z.infer<typeof registerSchema> & {
+    username: string
+}
 
