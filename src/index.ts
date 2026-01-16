@@ -1,6 +1,7 @@
 import express, { type Request, type Response } from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url';
+import { apiRouter } from './routes/index.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,3 +22,6 @@ app.listen(PORT, () => {
 app.get('/', (req: Request, res: Response) => {
     res.send({ message: "Hello, i'm using typescript for this project" })
 });
+
+
+app.use("/api/v1", apiRouter)
