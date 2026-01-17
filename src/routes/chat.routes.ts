@@ -24,8 +24,8 @@ chatRoutes.get("/", async (req: Request, res: Response) => {
     })
 })
 
-chatRoutes.post("/", async (req: Request, res: Response) => {
-    const username = String(req.body.username) || ""
+chatRoutes.post("/:username", async (req: Request, res: Response) => {
+    const username = String(req.params.username) || ""
 
     const user = await getUser(username)
     if (!user) return res.status(404).json({
@@ -57,8 +57,8 @@ chatRoutes.post("/", async (req: Request, res: Response) => {
     })
 })
 
-chatRoutes.delete("/", async (req: Request, res: Response) => {
-    const chatId = Number(req.body.username)
+chatRoutes.delete("/:chatId", async (req: Request, res: Response) => {
+    const chatId = Number(req.params.chatId)
     if (isNaN(chatId)) return res.status(400).json({
         message: "Valor de chatId inválido"
     })
