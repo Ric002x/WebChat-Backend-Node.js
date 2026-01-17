@@ -3,10 +3,10 @@ import { loginSchema, registerSchema, type RegisterData } from "../schemas/auth.
 import { formatZodError } from "../lib/zod.ts";
 import { prisma } from "../lib/prisma.ts";
 import { generateHash, passwordCheck } from "../lib/bcrypt.ts";
-import { ReturnUser } from "../types/User.ts";
 import { generateAccessToken } from "../middlewares/jwt.ts";
 import { Prisma } from "../generated/prisma/client.ts";
 import { randomUUID } from "crypto";
+import { userSerializer } from "../serializers/user.ts";
 
 export const authRoutes = Router()
 
@@ -41,13 +41,14 @@ authRoutes.post("/register", async (req: Request, res: Response) => {
 
     try {
         const user = await prisma.user.create({
-            data: payload,
-            select: ReturnUser
+            data: payload
         })
+
+        const userSerialized = userSerializer(user)
 
         const accessToken = generateAccessToken({ id: user.id })
         return res.status(201).json({
-            user: user,
+            user: userSerialized,
             accessToken: accessToken
         })
 
@@ -94,12 +95,12 @@ authRoutes.post("/login", async (req: Request, res: Response) => {
         })
     }
 
-    const { password, ...userWithoutPassword } = user;
+    const userSerialized = userSerializer(user)
     const accessToken = generateAccessToken({ id: user.id })
 
     try {
         return res.send({
-            user: userWithoutPassword,
+            user: userSerialized,
             accessToken: accessToken,
         })
 

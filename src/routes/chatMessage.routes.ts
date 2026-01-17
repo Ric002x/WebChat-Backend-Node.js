@@ -3,6 +3,7 @@ import { authMiddleware } from "../middlewares/jwt.ts";
 import { chatBelongsToUser, markMessagesAsSeen } from "./utils/chat.ts";
 import { getIO } from "../lib/socket.ts";
 import { prisma } from "../lib/prisma.ts";
+import { ChatMessageSerializer } from "../serializers/chat.ts";
 
 export const chatMessageRoutes = Router()
 chatMessageRoutes.use(authMiddleware)
@@ -35,7 +36,8 @@ chatMessageRoutes.get("/:chatId", async (req: Request, res: Response) => {
         where: { chatId, deletedAt: null },
         orderBy: { createdAt: "desc" },
         take: perPage,
-        skip
+        skip,
+        include: { user: true }
     })
 
     socket.emit("updateChat", {
@@ -44,9 +46,11 @@ chatMessageRoutes.get("/:chatId", async (req: Request, res: Response) => {
         }
     })
 
+    const chatMessagesSerialized = await ChatMessageSerializer(messages, { many: true })
+
     return res.json({
         page: page,
-        messages
+        messages: chatMessagesSerialized
     })
 })
 
@@ -56,7 +60,7 @@ chatMessageRoutes.post("/:chatId", async (req: Request, res: Response) => {
         message: "Valor de chatId inválido"
     })
 
-    const body: string | null = req.body
+    const body: string | null = req.body.body
 
     const chat = await chatBelongsToUser(chatId, req.user?.id as number)
     if (!chat) return res.status(404).json({
@@ -73,13 +77,17 @@ chatMessageRoutes.post("/:chatId", async (req: Request, res: Response) => {
             chatId,
             body,
             userId: req.user?.id as number
-        }
+        },
+        include: { user: true }
     })
+
+    const serialized = await ChatMessageSerializer(chatMessage, { many: false })
+
 
     const socket = getIO()
     socket.emit("updateChatMessages", {
         type: "create",
-        message: chatMessage,
+        message: serialized,
         query: {
             chatId
         }
@@ -97,7 +105,7 @@ chatMessageRoutes.post("/:chatId", async (req: Request, res: Response) => {
     })
 
     return res.json({
-        message: chatMessage
+        message: serialized
     })
 })
 

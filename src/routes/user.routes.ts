@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import fs, { mkdir, unlink } from "fs/promises";
 import { generateHash, passwordCheck } from "../lib/bcrypt.ts";
+import { userSerializer } from "../serializers/user.ts";
 
 export const userRoutes = Router()
 userRoutes.use(authMiddleware)
@@ -106,11 +107,13 @@ userRoutes.put("/update", upload.single("avatar"), async (req: Request, res: Res
             where: {
                 id: req.user?.id as number
             },
-            data: payload,
-            select: ReturnUser
+            data: payload
         })
+
+        const userSerialized = userSerializer(userUpdated)
+
         return res.json({
-            user: userUpdated
+            user: userSerialized
         })
 
     } catch (error) {

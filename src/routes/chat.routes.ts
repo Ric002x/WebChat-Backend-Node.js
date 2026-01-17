@@ -3,6 +3,7 @@ import { authMiddleware } from "../middlewares/jwt.ts";
 import { prisma } from "../lib/prisma.ts";
 import { chatBelongsToUser, getUser, hasExistingChat } from "./utils/chat.ts";
 import { getIO } from "../lib/socket.ts";
+import { ChatSerializer } from "../serializers/chat.ts";
 
 export const chatRoutes = Router();
 chatRoutes.use(authMiddleware)
@@ -16,11 +17,14 @@ chatRoutes.get("/", async (req: Request, res: Response) => {
             ],
             deletedAt: null
         },
-        orderBy: { viewedAt: "desc" }
+        include: { userOne: true, userTwo: true },
+        orderBy: { viewedAt: "desc" },
     })
 
+    const chatsSerialized = await ChatSerializer(chats, req.user?.id as number, { many: true })
+
     return res.send({
-        chats: chats
+        chats: chatsSerialized
     })
 })
 
@@ -52,8 +56,10 @@ chatRoutes.post("/:username", async (req: Request, res: Response) => {
 
     }
 
+    const chatSerialized = await ChatSerializer(chat, req.user?.id as number, { many: false })
+
     return res.json({
-        chat
+        chat: chatSerialized
     })
 })
 
