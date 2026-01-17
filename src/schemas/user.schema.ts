@@ -1,3 +1,4 @@
+import path from "node:path";
 import * as z from "zod";
 
 
@@ -23,10 +24,12 @@ export const updatePasswordSchema = z.object({
     password: z.string({ error: "Campo obrigatório" })
         .regex(/^(?=.*[A-Z])(?=.*\d).{8,}$/, { error: "A senha deve ter o mínimo de 8 caracteres, e conter ao menos um número e um caractere especial" }),
     confirmPassword: z.string({ error: "Campo obrigatório" })
-}).refine((data) => {
-    data.password === data.confirmPassword,
-        { error: "As senha não coincidem" }
-}).transform(({ confirmPassword, ...rest }) => rest);
+}).refine(
+    (data) => data.password === data.confirmPassword,
+    {
+        error: "As senhas não coincidem", path: ["confirmPassword"]
+    }
+).transform(({ confirmPassword, ...rest }) => rest);
 
 export type UpdateUserPasswordData = {
     password: string;
