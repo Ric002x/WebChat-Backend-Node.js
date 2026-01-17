@@ -2,7 +2,6 @@ import express, { type Request, type Response } from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url';
 import { apiRouter } from './routes/index.ts';
-import { Server } from "socket.io"
 import http from "http"
 import { initIO } from './lib/socket.ts';
 

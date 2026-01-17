@@ -8,7 +8,11 @@ export const initIO = (server: HTTPServer): IOServer => {
     if (io) {
         return io; // already initialized
     }
-    io = new IOServer(server);
+    io = new IOServer(server, {
+        cors: {
+            origin: process.env.CORS_ALLOWED_ORIGIN
+        }
+    });
     return io;
 };
 
