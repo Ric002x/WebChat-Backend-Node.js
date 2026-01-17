@@ -12,24 +12,11 @@ export type User = {
     role: string
 }
 
-export const ReturnUser = {
-    id: true,
-    avatar: true,
-    email: true,
-    name: true,
-    username: true,
-    birthday: true,
-    createdAt: true,
-    updatedAt: true,
-    lastAccess: true,
-    passwordUpdatedAt: true,
-    role: true
-}
-
-
-export const ReturnSimpleUser = {
-    id: true,
-    avatar: true,
-    name: true,
-    username: true
+export type UserSerialized = {
+    id: number,
+    name: string,
+    email: string,
+    username: string,
+    avatar: string,
+    lastAccess: Date
 }
