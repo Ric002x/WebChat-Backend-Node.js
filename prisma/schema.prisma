@@ -38,14 +38,16 @@ model User {
 
 model Chat {
   id           Int           @id @default(autoincrement())
-  createdAt    DateTime
+  createdAt    DateTime      @default(now())
+  deletedAt    DateTime?
+  viewedAt     DateTime?
   chatMessages ChatMessage[]
 
   userOneId Int
   userOne   User @relation("UserOne", fields: [userOneId], references: [id])
 
-  UserTwoId Int
-  UserTwo   User @relation("UserTwo", fields: [UserTwoId], references: [id])
+  userTwoId Int
+  userTwo   User @relation("UserTwo", fields: [userTwoId], references: [id])
 }
 
 model ChatMessage {
@@ -55,6 +57,8 @@ model ChatMessage {
   userId    Int
   createdAt DateTime  @default(now())
   updatedAt DateTime?
+  deletedAt DateTime?
+  viewedAt  DateTime?
 
   user User @relation(fields: [chatId], references: [id])
   chat Chat @relation(fields: [chatId], references: [id])
