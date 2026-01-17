@@ -30,4 +30,34 @@ model User {
   updatedAt         DateTime?
   passwordUpdatedAt DateTime?
   lastAccess        DateTime  @default(now())
+
+  chatMessages ChatMessage[]
+  userOneChats Chat[]        @relation("UserOne")
+  userTwoChats Chat[]        @relation("UserTwo")
+}
+
+model Chat {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime
+  chatMessages ChatMessage[]
+
+  userOneId Int
+  userOne   User @relation("UserOne", fields: [userOneId], references: [id])
+
+  UserTwoId Int
+  UserTwo   User @relation("UserTwo", fields: [UserTwoId], references: [id])
+}
+
+model ChatMessage {
+  id        Int       @id @default(autoincrement())
+  body      String
+  chatId    Int
+  userId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+
+  user User @relation(fields: [chatId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  @@index([chatId])
 }
