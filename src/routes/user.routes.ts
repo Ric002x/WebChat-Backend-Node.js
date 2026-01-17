@@ -3,7 +3,6 @@ import { authMiddleware } from "../middlewares/jwt.ts";
 import { updatePasswordSchema, updateUserSchema, type UpdateUserData, type UpdateUserPasswordData } from "../schemas/user.schema.ts";
 import { formatZodError } from "../lib/zod.ts";
 import { prisma } from "../lib/prisma.ts";
-import { ReturnSimpleUser, ReturnUser } from "../types/User.ts";
 import { Prisma } from "../generated/prisma/client.ts";
 import { upload } from "../middlewares/multer.ts";
 import { fileURLToPath } from "url";
@@ -182,29 +181,4 @@ userRoutes.put("/update-password", async (req: Request, res: Response) => {
             })
         }
     }
-})
-
-
-userRoutes.get('/find', async (req: Request, res: Response) => {
-    const search = String(req.query.search || '');
-    if (search.length > 50) {
-        return res.status(400).json({ error: 'Limite de carteres de busca excedidos. Máximo de 50 caracteres.' });
-    }
-
-    const perPage = 10;
-    const page = parseInt(req.query.page as string) || 1;
-    const skip = (page - 1) * perPage
-
-    const users = await prisma.user.findMany({
-        where: { name: { contains: search } },
-        take: perPage,
-        orderBy: { name: "desc" },
-        skip: skip,
-        select: ReturnSimpleUser
-    })
-
-    return res.json({
-        page: page,
-        users: users
-    })
 })
