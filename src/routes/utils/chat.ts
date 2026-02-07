@@ -1,13 +1,13 @@
 import { prisma } from "../../lib/prisma.ts"
-import { ReturnSimpleUser } from "../../types/User.ts"
+import { userSerializer } from "../../serializers/user.ts"
 
 export const getUser = async (username: string) => {
     const user = await prisma.user.findUnique({
-        where: { username },
-        select: ReturnSimpleUser
+        where: { username }
     })
 
-    if (user) return user
+    if (user) return userSerializer(user)
+
     return null
 }
 

@@ -28,8 +28,8 @@ chatRoutes.get("/", async (req: Request, res: Response) => {
     })
 })
 
-chatRoutes.post("/:username", async (req: Request, res: Response) => {
-    const username = String(req.params.username) || ""
+chatRoutes.post("/", async (req: Request, res: Response) => {
+    const username = String(req.body.username) || ""
 
     const user = await getUser(username)
     if (!user) return res.status(404).json({
@@ -44,7 +44,8 @@ chatRoutes.post("/:username", async (req: Request, res: Response) => {
                 userOneId: req.user?.id as number,
                 userTwoId: user.id,
                 viewedAt: new Date()
-            }
+            },
+            include: { userOne: true, userTwo: true }
         })
 
         const socket = getIO()

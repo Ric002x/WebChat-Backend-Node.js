@@ -34,9 +34,8 @@ chatMessageRoutes.get("/:chatId", async (req: Request, res: Response) => {
 
     const messages = await prisma.chatMessage.findMany({
         where: { chatId, deletedAt: null },
-        orderBy: { createdAt: "desc" },
-        take: perPage,
-        skip,
+        orderBy: { createdAt: "asc" },
+        take: skip,
         include: { user: true }
     })
 

@@ -10,13 +10,21 @@ import path from "path";
 import fs, { mkdir, unlink } from "fs/promises";
 import { generateHash, passwordCheck } from "../lib/bcrypt.ts";
 import { userSerializer } from "../serializers/user.ts";
+import type { User } from "../types/User.ts";
 
 export const userRoutes = Router()
 userRoutes.use(authMiddleware)
 
 userRoutes.get('/me', async (req: Request, res: Response) => {
+    const user = await prisma.user.update({
+        where: { id: req.user?.id as number },
+        data: {
+            lastAccess: new Date()
+        }
+    })
+    const serialized = userSerializer(user)
     return res.json({
-        user: req.user
+        user: serialized
     })
 })
 
