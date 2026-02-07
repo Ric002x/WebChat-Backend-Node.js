@@ -10,7 +10,7 @@ export const initIO = (server: HTTPServer): IOServer => {
     }
     io = new IOServer(server, {
         cors: {
-            origin: process.env.CORS_ALLOWED_ORIGIN
+            origin: ["http://localhost:3000", "http://127.0.0.1:3000", process.env.CORS_ALLOWED_ORIGIN as string]
         }
     });
     return io;

@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { prisma } from "../lib/prisma.ts"
-import { ReturnUser, type User } from "../types/User.ts"
 
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "insecure"
@@ -33,7 +32,19 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         const decoded = jwt.verify(token as string, accessTokenSecret) as { id: number };
         const user = await prisma.user.findFirst({
             where: { id: decoded.id },
-            select: ReturnUser
+            select: {
+                id: true,
+                avatar: true,
+                email: true,
+                name: true,
+                username: true,
+                birthday: true,
+                createdAt: true,
+                updatedAt: true,
+                lastAccess: true,
+                passwordUpdatedAt: true,
+                role: true,
+            }
         })
 
         if (!user) return res.status(401).json({ message: 'Usuário não encontrado' });

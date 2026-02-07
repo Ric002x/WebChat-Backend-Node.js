@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { apiRouter } from './routes/index.ts';
 import http from "http"
 import { initIO } from './lib/socket.ts';
+import cors from "cors"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,9 +13,12 @@ const __dirname = path.dirname(__filename);
 const app = express()
 const PORT = 5000
 
+app.use(cors({
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"]
+}))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/static', express.static(path.join(__dirname, 'static')))
+app.use('/static', express.static(path.resolve(process.cwd(), "src/static")))
 
 
 // Configure socket
