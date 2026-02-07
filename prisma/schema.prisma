@@ -18,7 +18,7 @@ enum UserRole {
 model User {
   id       Int       @id @default(autoincrement())
   email    String    @unique
-  avatar   String    @default("/static/images/avatar/default.png")
+  avatar   String    @default("/static/images/avatars/default.png")
   name     String
   username String    @unique
   birthday DateTime?
@@ -60,7 +60,7 @@ model ChatMessage {
   deletedAt DateTime?
   viewedAt  DateTime?
 
-  user User @relation(fields: [chatId], references: [id])
+  user User @relation(fields: [userId], references: [id])
   chat Chat @relation(fields: [chatId], references: [id])
 
   @@index([chatId])
