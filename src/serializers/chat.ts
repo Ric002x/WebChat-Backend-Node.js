@@ -35,13 +35,11 @@ export const ChatMessageSerializer = async (data: any, { many = false }: { many:
 export const ChatSerializerRaw = async (chat: Chat, reqUserId: number): Promise<ChatSerialized | null> => {
     // Pegar usuário
     function getUser() {
-        let user = chat.userOne
-
         if (chat.userOne.id === reqUserId) {
-            user = chat.userTwo
+            return chat.userTwo
         }
 
-        return user
+        return chat.userOne
     }
 
     // Pegar qty de mensagens não visualizadas
@@ -80,7 +78,7 @@ export const ChatSerializerRaw = async (chat: Chat, reqUserId: number): Promise<
         return null
     }
 
-    const user = userSerializer(getUser())
+    const toUser = userSerializer(getUser())
     const unseenCount = await getUnseenCount()
     const lastMessage = await getLastMessage()
 
@@ -88,7 +86,7 @@ export const ChatSerializerRaw = async (chat: Chat, reqUserId: number): Promise<
         id: chat.id,
         lastMessage,
         unseenCount,
-        user: user,
+        user: toUser,
         createdAt: chat.createdAt,
         viewedAt: chat.viewedAt
     }
