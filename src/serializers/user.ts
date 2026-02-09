@@ -9,6 +9,9 @@ export const userSerializer = (user: User) => {
         email: user.email,
         username: user.username,
         avatar: CURRENT_URL + user.avatar,
-        lastAccess: user.lastAccess
+        lastAccess: user.lastAccess,
+        birthday: user.birthday,
+        createdAt: user.createdAt,
+        passwordUpdatedAt: user.passwordUpdatedAt,
     };
 }

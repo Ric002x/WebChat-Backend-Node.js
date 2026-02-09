@@ -39,11 +39,9 @@ userRoutes.put("/update", upload.single("avatar"), async (req: Request, res: Res
     }
     const data = parsed.data
     const payload: Partial<UpdateUserData> = {}
-    if (data.email) payload.email = data.email
     if (data.name) payload.name = data.name
-    if (data.birthday) payload.birthday = data.birthday
+    if (data.birthday) payload.birthday = new Date(data.birthday).toISOString()
     if (data.username) payload.username = data.username
-    payload.updatedAt = new Date()
 
     // Verificar se existe usuário com o mesmo email
     if (data.email) {
@@ -109,6 +107,8 @@ userRoutes.put("/update", upload.single("avatar"), async (req: Request, res: Res
         payload.avatar = `/static/images/avatars/${filename}`
     }
 
+    console.log(payload)
+
     try {
         const userUpdated = await prisma.user.update({
             where: {
@@ -127,7 +127,7 @@ userRoutes.put("/update", upload.single("avatar"), async (req: Request, res: Res
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2014') {
                 return res.status(500).json({
-                    message: "erro ao criar usuário",
+                    message: "erro ao atualizar usuário",
                     detail: error.message
                 })
             }
