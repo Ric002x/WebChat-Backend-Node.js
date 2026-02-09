@@ -35,8 +35,9 @@ chatMessageRoutes.get("/:chatId", async (req: Request, res: Response) => {
     const messages = await prisma.chatMessage.findMany({
         where: { chatId, deletedAt: null },
         orderBy: { createdAt: "asc" },
-        take: skip,
-        include: { user: true }
+        include: { user: true },
+        skip,
+        take: perPage
     })
 
     socket.emit("updateChat", {
